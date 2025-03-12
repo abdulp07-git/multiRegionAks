@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role 
+metadata: 
+  namespace: staging
+  name: manager-role
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: staging
+  name: manager-rolebinding
+subjects: 
+- kind: Group 
+  name: "5cb228c4-536e-41d0-bdcb-06dab494c72e"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: manager-role
+  apiGroup: rbac.authorization.k8s.io

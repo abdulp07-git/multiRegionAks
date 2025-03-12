@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+  namespace: staging
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/server-alias: "grafana.intodepth.com" # 👈 Allows multiple domains
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: intodepth.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myservice  # Replace with your actual service name
+            port:
+              number: 8080
+  - host: grafana.intodepth.com
+    http:
+      paths: 
+      - path: / 
+        pathType: Prefix
+        backend:
+          service: 
+            name: kube-prometheus-stack-grafana
+            port: 
+              number: 80
+  - host: django.intodepth.com
+    http:
+      paths: 
+      - path: / 
+        pathType: Prefix
+        backend:
+          service: 
+            name: mydjango
+            port: 
+              number: 8000  

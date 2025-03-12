@@ -1,0 +1,3 @@
+production/application/target
+production/infrastructure/.terraform/providers/
+production/django/myenv

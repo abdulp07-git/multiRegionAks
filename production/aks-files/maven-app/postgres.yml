@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mypos
+spec:
+  selector:
+    matchLabels:
+      app: mypos
+  template:
+    metadata:
+      labels:
+        app: mypos
+    spec:
+      containers:
+      - name: mypos
+        image: abdulp07/postgrescar
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 5432
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: mypos
+spec:
+  selector:
+    app: mypos
+  ports:
+  - port: 5432
+    targetPort: 5432
+

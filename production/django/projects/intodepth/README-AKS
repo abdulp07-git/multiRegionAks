@@ -1,0 +1,21 @@
+car.sql is the backup of the database
+
+It has 2 dockerfiles.
+
+1. DockerfilePostgres:-
+   To build postgreSQL image using the above database backup
+   docker build -t abdulpo7/postgrecar -f DockerfilePostgres .
+
+2. Dockerfile
+   To build the application image.
+
+DEPLOYMENT into KUBERNETES
+
+1. Deploy the postgres first
+2. Note the service IP. Needed as DBHOST in the application
+3. Note the IP need to be added into the application allowed host
+4. Update application DBHOST and ALLOWED HOST with the respective IP's
+5. Deploy the application into k8
+
+
+Use post-forward  or ingress controller to access the application

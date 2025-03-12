@@ -1,0 +1,218 @@
+pipeline {
+    agent any
+
+    environment {
+        SONAR_TOKEN = credentials('SonarCloudToken')  // Store your token securely in Jenkins credentials
+        SONAR_PROJECT_KEY = "abdulp07-git_bw2"
+        SONAR_ORG = "abdulp07-git"
+        SONAR_HOST_URL = "https://sonarcloud.io"
+        AZURE_SECRET = credentials('azure_principal_secret')
+        AZURE_SUBSCRIPTION = credentials('azure_subscribtion')
+        AZURE_TENANT = credentials('azure_tenant')
+        AZURE_USER = credentials('azure_user')
+        SSH_PRIVATE_KEY = credentials('my_ssh_key')
+        REMOTE_USER = "azureuser"
+        REMOTE_HOST = "4.213.68.1"
+        
+        
+    }
+
+    stages {
+        
+        
+
+        stage('Checkout Code') {
+            steps {
+                git "https://github.com/abdulp07-git/bw2.git"
+            }
+        }
+        
+        
+        stage('Terraform build') {
+            steps {
+                script {
+                    try {
+                        // Authenticate with Azure
+                        sh """
+                        set -e
+                        az login --service-principal -u $AZURE_USER -p $AZURE_SECRET --tenant $AZURE_TENANT
+                        az account set --subscription $AZURE_SUBSCRIPTION
+                        """
+
+                        // Run Terraform commands
+                        sh "terraform -chdir=infrastructure init -reconfigure"
+                        sh "terraform -chdir=infrastructure plan -out=tfplan"
+                        sh "terraform -chdir=infrastructure apply -auto-approve tfplan"
+
+                        // Extract VM Public IP and assign it to REMOTE_HOST
+                        def vmIp = sh(
+                            script: "terraform -chdir=infrastructure output -raw vmip",
+                            returnStdout: true
+                        ).trim()
+
+                        // Set the environment variable
+                        env.REMOTE_HOST = vmIp
+                        echo "Assigned VM Public IP to REMOTE_HOST: ${env.REMOTE_HOST}"
+
+                    } catch (Exception e) {
+                        echo "Terraform execution failed: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+
+
+        
+        
+        
+
+        stage('Maven Test') {
+            steps {
+                sh 'mvn -f application/pom.xml test'
+            }
+        }
+
+        stage('SonarCloud Scan') {
+            steps {
+                    sh '''
+                        mvn -f application/pom.xml sonar:sonar \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                        -Dsonar.organization=${SONAR_ORG} \
+                        -Dsonar.host.url=${SONAR_HOST_URL} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    '''
+                }
+            
+        }
+
+        
+        stage('Build Artifact'){
+            steps{
+                sh 'mvn -f application/pom.xml clean package'
+                
+            }
+        }
+        
+        
+        stage("Docker image"){
+            steps {
+                script {
+                    def dockerImage = "bw89acr.azurecr.io/bw2"
+                    def tag = "v${BUILD_NUMBER}"
+                    def fullImageName = "${dockerImage}:${tag}"
+                    sh "docker build -t ${fullImageName} -f application/Dockerfile application/"
+                }
+            }
+        }
+        
+        stage("Push image to ACR") {
+            steps {
+                script {
+                    
+                    def dockerImage = "bw89acr.azurecr.io/bw2"
+                    def tag = "v${BUILD_NUMBER}"
+                    def fullImageName = "${dockerImage}:${tag}"
+                    
+                    // Authenticate to Azure
+            sh """
+                az login --service-principal -u $AZURE_USER -p $AZURE_SECRET --tenant $AZURE_TENANT
+                az account set --subscription $AZURE_SUBSCRIPTION
+            """
+                    // Login to ACR
+            sh "az acr login --name bw89acr"
+            
+                   // Push the image to ACR
+            sh "docker push ${fullImageName}"
+            
+                    // Logout from Azure
+            sh "az logout"
+            
+                    
+                }
+            }
+        }
+        
+
+        stage ("Modify Configurations"){
+            steps {
+                script {
+                    sh """
+                    sed -i "s|image: bw89acr.azurecr.io/maven:latest|image: bw89acr.azurecr.io/bw2:v${BUILD_NUMBER}|" aks-files/maven-app/maven.yml
+                    """
+                }
+            }
+        }
+
+
+        
+        
+        stage ("Sync configs"){
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                    rsync -avz -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" aks-files $REMOTE_USER@$REMOTE_HOST:.
+                    """
+                    }
+                
+            }
+        }  
+
+
+
+
+
+
+
+        stage ("Deployment") {
+                steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+ssh -i $SSH_KEY -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+echo "Running commands on remote VM"
+
+az login --service-principal -u $AZURE_USER -p $AZURE_SECRET --tenant $AZURE_TENANT
+az aks get-credentials --resource-group bw89rg --name bwaks --overwrite-existing
+
+#install nginx ingress controller
+kubectl apply -f aks-files/ingress/install-nginx-ingress.yml
+
+# Create namespace only if it doesn't exist
+kubectl get namespace staging || kubectl create namespace staging
+
+# Apply deployment files
+kubectl apply -f aks-files/maven-app/maven.yml -n staging
+
+#install prometheus grafana
+helm install kube-prometheus-stack aks-files/helm-charts/kube-prometheus-stack -n staging
+
+sleep 30
+
+#create ingress for domains
+kubectl apply -f aks-files/ingress/intodepth.com-ingress.yml
+
+                                                                                                                                                    
+EOF
+"""
+                    }
+                }
+            }
+
+
+
+        
+               
+        
+    } //stages finshed
+
+    //post {
+    //    success {
+    //        build job: 'bw2-aks-deploy',
+    //            wait: false,
+    
+       // }
+    //}
+
+}
+
