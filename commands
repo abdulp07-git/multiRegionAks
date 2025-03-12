@@ -1,0 +1,35 @@
+kubectl-argo-rollouts dashboard  
+To load the dashboard
+
+kubectl-argo-rollouts promote django-rollout
+💡 This skips the remaining pause steps and fully deploys the new version.
+
+kubectl-argo-rollouts restart django-rollout
+💡 This forces a new rollout and restarts the pods.
+
+
+kubectl-argo-rollouts set-step django-rollout --index=2
+💡 Use this to move to a specific step in the canary deployment.
+
+
+kubectl-argo-rollouts rollback django-rollout
+💡 This reverts the rollout to the previous version.
+
+
+kubectl-argo-rollouts get rollout django-rollout
+💡 Shows pod count, progress, and current step.
+
+
+kubectl-argo-rollouts history django-rollout
+💡 Useful for tracking version changes.
+
+
+kubectl-argo-rollouts get rollout django-rollout --watch
+💡 Shows live updates on the rollout process.
+
+
+kubectl-argo-rollouts abort django-rollout
+💡 Cancels the rollout and keeps the current running version.
+
+
+

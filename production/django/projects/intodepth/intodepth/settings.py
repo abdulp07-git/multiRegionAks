@@ -32,7 +32,8 @@ ALLOWED_HOSTS = [
             'dev-djangoLoadBalancer-608461561.ap-south-1.elb.amazonaws.com',
             'intodepth.in',
             '127.0.0.1',
-            '4.213.68.1',
+            'django.intodepth.com',
+            '20.204.172.229',
         ]
 
 
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': 'car',
         'USER': 'admin_user',
         'PASSWORD': 'password123',
-        'HOST': '10.1.229.182'
+        'HOST': 'postgres'
     }
 }
 

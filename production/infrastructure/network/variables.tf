@@ -72,7 +72,11 @@ variable "security-rule" {
   },
   {
     name = "allow-frontend", priority = 1008, destination_port = "30001"
-  } ]
+  },
+  {
+    name = "allow-rollout", priority = 1009, destination_port = "3100"
+  }
+   ]
 }
 
 
