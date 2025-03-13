@@ -29,10 +29,10 @@ module "aks" {
   vnet-id = module.network.vnet-id
 }
 
-#module "gateway" {
-  #source = "./gateway"
-  #rg = module.network.resource_group_name
-  #subnetid = module.network.subnet-gateway
-  #location = module.network.location
-  #vnet = module.network.vnet-id
-#}
+module "gateway" {
+  source = "./gateway"
+  rg = module.network.resource_group_name
+  subnetid = module.network.subnet-gateway
+  location = module.network.location
+  vnet = module.network.vnet-id
+}

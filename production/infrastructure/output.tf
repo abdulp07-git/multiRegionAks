@@ -11,6 +11,6 @@ output "aks_name" {
 }
 
 
-#output "gateway-public-ip" {
-  #value = module.gateway.gateway-public-ip
-#}
+output "gateway-public-ip" {
+  value = module.gateway.gateway-public-ip
+}
