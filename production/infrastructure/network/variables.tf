@@ -1,42 +1,11 @@
-variable "location" {
-  type = string
-  default = "central India"
+
+variable "region" {
+  description = "Regions in which the cluster is created"  
+  type = list(string)
+  default = [ "eastus", "ukwest", "centralindia" ]
 }
 
-variable "rgname" {
-  type = string
-  default = "bw89rg"
-}
 
-variable "vnetname" {
-  type = string
-  default = "bw89vnet"
-}
-
-variable "cidr" {
-  type = string
-  default = "10.0.0.0/16"
-}
-
-variable "subnetname" {
-  type = string
-  default = "subnet-aks"
-}
-
-variable "subnetiprange" {
-  type = string
-  default = "10.0.1.0/24"
-}
-
-variable "subnetname2" {
-  type = string
-  default = "subnet-gateway"
-}
-
-variable "subnetgatewayrange" {
-  type = string
-  default = "10.0.2.0/24"
-}
 
 variable "security-rule" {
   type = list(object({
@@ -74,11 +43,20 @@ variable "security-rule" {
     name = "allow-frontend", priority = 1008, destination_port = "30001"
   },
   {
-    name = "allow-rollout", priority = 1009, destination_port = "3100"
-  }
-   ]
+    name = "allow-dns", priority = 1009, destination_port = "53"
+  }  ]
 }
 
+
+variable "bastionIP" {
+  type = string
+  default = "bastionIP"
+}
+
+variable "vmsize" {
+  type = string
+  default = "Standard_B1s"
+}
 
 variable "ssh-key" {
   type = string

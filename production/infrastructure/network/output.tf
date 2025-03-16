@@ -1,27 +1,44 @@
-output "resource_group_name" {
-  value = azurerm_resource_group.rg.name
+/* Test Outputs*/
+output "rg" {
+  value = { for index, rg in azurerm_resource_group.rg : rg.name => rg.location }
 }
 
-output "vm_public_ip" {
-  value = azurerm_linux_virtual_machine.bwnginxvm.public_ip_address
+output "test" {
+  value = { for index, test in azurerm_virtual_network.vnet: test.name => test.id }
 }
 
-output "location" {
-  value = azurerm_resource_group.rg.location
+output "bastion-ip" {
+  value = azurerm_linux_virtual_machine.bastion.public_ip_address
+}
+/***********/
+
+
+
+/* Resource group names as a list*/
+
+output "rg_names" {
+  value = [ for rg in azurerm_resource_group.rg : rg.name ]
 }
 
-output "vnet-name" {
-  value = azurerm_virtual_network.vnet.name
+
+/* Resource group location as a list*/
+output "rg_location" {
+  value =  [ for lc in azurerm_resource_group.rg : lc.location]
 }
 
-output "vnet-id" {
-  value = azurerm_virtual_network.vnet.id
+
+/* VNET id's as a list*/
+output "vnet_id" {
+  value = [ for vid in azurerm_virtual_network.vnet : vid.id ]
 }
 
-output "subnet-id" {
-  value = azurerm_subnet.subnet.id
+/*Subnet1 id's as a list*/
+output "subnet1_id" {
+  value = [ for sid in azurerm_subnet.subnet1 : sid.id]
 }
 
-output "subnet-gateway" {
-  value = azurerm_subnet.subnet2.id
+
+output "subnet2_id" {
+  value = [ for sid in azurerm_subnet.subnet2 : sid.id]
 }
+

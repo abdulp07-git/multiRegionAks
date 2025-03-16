@@ -3,8 +3,8 @@ replicaCount: 3
 appName: django
 
 image:
-  repository: bw89acr.azurecr.io/django
-  tag: 0.6.0
+  repository: maksacr.azurecr.io/django
+  tag: 0.5.0
 
 container:
   name: django
@@ -43,7 +43,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: django.intodepth.com
+    - host: django.intodepth.in
       paths:
         - path: /
           pathType: Prefix
