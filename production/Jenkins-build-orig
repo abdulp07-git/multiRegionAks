@@ -28,7 +28,6 @@ pipeline {
         }
         
         
-        /**
         stage('Terraform build') {
             steps {
                 script {
@@ -63,7 +62,6 @@ pipeline {
                 }
             }
         }
-        **/
 
 
         
@@ -148,17 +146,74 @@ pipeline {
             }
         }
 
-        stage ("Push helm chat to ACR"){
+
+        
+        
+        stage ("Sync configs"){
             steps {
-                script {
+                withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
                     sh """
-                    helm package production/kubernetes/helm-charts/maven -d production/kubernetes/helm-charts/
-                    helm push production/kubernetes/helm-charts/maven-v${BUILD_NUMBER}.tgz oci://maksacr.azurecr.io/helm
+                    rsync -avz -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" aks-files $REMOTE_USER@$REMOTE_HOST:.
                     """
+                    }
+                
+            }
+        }  
+
+
+
+
+
+
+
+        stage ("Deployment") {
+                steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+ssh -i $SSH_KEY -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+echo "Running commands on remote VM"
+
+az login --service-principal -u $AZURE_USER -p $AZURE_SECRET --tenant $AZURE_TENANT
+az aks get-credentials --resource-group bw89rg --name bwaks --overwrite-existing
+
+#install nginx ingress controller
+kubectl apply -f aks-files/ingress/install-nginx-ingress.yml
+
+# Create namespace only if it doesn't exist
+kubectl get namespace staging || kubectl create namespace staging
+
+# Apply deployment files
+kubectl apply -f aks-files/maven-app/maven.yml -n staging
+
+#install prometheus grafana
+helm install kube-prometheus-stack aks-files/helm-charts/kube-prometheus-stack -n staging
+
+sleep 30
+
+#create ingress for domains
+kubectl apply -f aks-files/ingress/intodepth.com-ingress.yml
+
+                                                                                                                                                    
+EOF
+"""
+                    }
                 }
             }
-        }
 
 
-    } //Stages end here.
-} //pipeline end here
+
+        
+               
+        
+    } //stages finshed
+
+    //post {
+    //    success {
+    //        build job: 'bw2-aks-deploy',
+    //            wait: false,
+    
+       // }
+    //}
+
+}
+

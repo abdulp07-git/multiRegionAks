@@ -2,3 +2,5 @@ production/application/target
 production/infrastructure/.terraform/providers/
 production/django/myenv
 notes
+*.tgz
+*.pdf

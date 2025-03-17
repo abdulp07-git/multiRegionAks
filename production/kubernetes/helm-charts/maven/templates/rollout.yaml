@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    canary:
+      steps:
+        {{- if .Values.strategy.canary.steps }}
+        {{- range .Values.strategy.canary.steps }}
+        - {{ toYaml . | nindent 10 }}
+        {{- end }}
+        {{- else }}
+        - setWeight: 100  # Default step if none provided
+        {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      serviceAccountName: {{ include "maven.serviceAccountName" . }}
+      containers:
+        - name: {{ .Values.container.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}

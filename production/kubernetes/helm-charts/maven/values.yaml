@@ -1,0 +1,58 @@
+replicaCount: 3
+
+appName: maven
+
+image:
+  repository: maksacr.azurecr.io/maven
+  tag: 0.5.0
+
+container:
+  name: maven
+  port: 8080
+
+service:
+  type: "ClusterIP"  # Or "NodePort" / "LoadBalancer"
+  port: 8080
+  targetPort: 8080
+
+serviceAccount:
+  create: true
+  name: maven-sa
+
+strategy:
+  canary:
+    steps:
+      - setWeight: 20
+      - pause:
+          duration: 30s
+      - setWeight: 50
+      - pause:
+          duration: 60s
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: maven.intodepth.in
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+
+hpa:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
