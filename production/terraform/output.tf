@@ -7,7 +7,7 @@ output "acr-name" {
   value = module.acr.acr-name
 }
 
-/**
+
 
 output "gateway-ips" {
   value = module.gateway.gateway-ips
@@ -17,4 +17,4 @@ output "gateway-ips" {
 output "afd-cname" {
   value = module.frontDoor.afd-cname
 }
-**/
+

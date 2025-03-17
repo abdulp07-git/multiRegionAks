@@ -1,12 +1,12 @@
 resource "azurerm_frontdoor" "afd" {
-  name                = "django-intodepth-frontend"
+  name                = "maven-intodepth-frontend"
   resource_group_name = var.afd-rg
 
   routing_rule {
     name               = "geo-routing"
     accepted_protocols = ["Http", "Https"]
     patterns_to_match  = ["/*"]
-    frontend_endpoints = ["afd-frontend"]  # ✅ Fixed Reference
+    frontend_endpoints = ["afd-frontend", "afd-default"]   # ✅ Fixed Reference
 
     forwarding_configuration {
       forwarding_protocol = "MatchRequest"
@@ -59,6 +59,13 @@ resource "azurerm_frontdoor" "afd" {
     health_probe_name   = "health-probe-settings"
   }
 
+
+
+  frontend_endpoint {
+    name      = "afd-default"
+    host_name = "maven-intodepth-frontend.azurefd.net"
+  }
+  
   frontend_endpoint {
     name      = "afd-frontend"
     host_name = var.domain-name

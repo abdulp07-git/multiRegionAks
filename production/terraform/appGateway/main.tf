@@ -35,20 +35,20 @@ resource "azurerm_application_gateway" "app-gway" {
   }
   
   backend_http_settings {
-    name = "http-settings-django"
+    name = "http-settings-maven"
     cookie_based_affinity = "Disabled"
     port = 80
     protocol = "Http"
     request_timeout = 30
-    host_name = "django.intodepth.in"
+    host_name = var.hostname
   }
 
   http_listener {
-    name = "listener-django"
+    name = "listener-maven"
     frontend_ip_configuration_name = "appgw-frontend-ip"
     frontend_port_name = "http-port"
     protocol = "Http"
-    host_name = "django.intodepth.in"
+    host_name = var.hostname
   }
 
   frontend_port {
@@ -57,12 +57,12 @@ resource "azurerm_application_gateway" "app-gway" {
   }
 
   request_routing_rule {
-    name = "rule-django"
+    name = "rule-maven"
     rule_type = "Basic"
     priority = 100
-    http_listener_name = "listener-django"
+    http_listener_name = "listener-maven"
     backend_address_pool_name = "appgw-backend-pool"
-    backend_http_settings_name = "http-settings-django"
+    backend_http_settings_name = "http-settings-maven"
   }
 
 }

@@ -8,6 +8,6 @@ variable "afd-rg" {
 }
 
 variable "domain-name" {
-  default = "django.intodepth.in"
+  default = "maven.intodepth.in"
 }
 

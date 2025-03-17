@@ -28,3 +28,8 @@ variable "region" {
   type = list(string)
   default = [ "eastus", "ukwest", "centralindia" ]
 }
+
+variable "hostname" {
+  type = string
+  default = "maven.intodepth.in"
+}

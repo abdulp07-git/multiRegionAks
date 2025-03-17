@@ -45,7 +45,7 @@ module "pvt-dns-zone" {
   vnet_id = module.network.vnet_id
 }
 
-/**
+
 
 module "gateway" {
   source = "./appGateway"
@@ -55,8 +55,8 @@ module "gateway" {
   subnet2_id = module.network.subnet2_id
 }
 
+
 module "frontDoor" {
   source = "./frontDoor"
   gateway-ips = module.gateway.gateway-ips
 }
-**/
