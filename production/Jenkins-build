@@ -190,7 +190,7 @@ az aks get-credentials --resource-group rg-centralindia --name maks-rg-centralin
 
 
 # Switch to us
-k1
+kubectl config use-context maks-rg-eastus-admin
 
 #install nginx-ingress controller in us
 kubectl get ns ingress-nginx || kubectl apply -f eastus-install-nginx-ingress.yml
@@ -206,7 +206,7 @@ sudo systemctl restart argocd-us.service
 
 
 # Switch to uk
-k2
+kubectl config use-context maks-rg-ukwest-admin
 
 #install nginx-ingress controller in us
 kubectl get ns ingress-nginx || kubectl apply -f ukwest-install-nginx-ingress.yml
@@ -223,7 +223,7 @@ sudo systemctl restart argocd-uk.service
 
 
 # Switch to central india
-k3
+kubectl config use-context maks-rg-centralindia-admin
 
 #install nginx-ingress controller in central india
 kubectl get ns ingress-nginx || kubectl apply -f centralindia-install-nginx-ingress.yml
