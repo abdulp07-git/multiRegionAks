@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"aks-cluster","Source":"./aks-cluster","Dir":"aks-cluster"},{"Key":"frontDoor","Source":"./frontDoor","Dir":"frontDoor"},{"Key":"gateway","Source":"./appGateway","Dir":"appGateway"},{"Key":"network","Source":"./network","Dir":"network"}]}

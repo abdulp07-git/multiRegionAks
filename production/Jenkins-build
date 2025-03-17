@@ -28,7 +28,7 @@ pipeline {
         }
         
         
-        /**
+        
         stage('Terraform build') {
             steps {
                 script {
@@ -41,13 +41,13 @@ pipeline {
                         """
 
                         // Run Terraform commands
-                        sh "terraform -chdir=production/infrastructure init -reconfigure"
-                        sh "terraform -chdir=production/infrastructure plan -out=tfplan"
-                        sh "terraform -chdir=production/infrastructure apply -auto-approve tfplan"
+                        sh "terraform -chdir=production/terraform init -reconfigure"
+                        sh "terraform -chdir=production/terraform plan -out=tfplan"
+                        sh "terraform -chdir=production/terraform apply -auto-approve tfplan"
 
                         // Extract VM Public IP and assign it to REMOTE_HOST
                         def vmIp = sh(
-                            script: "terraform -chdir=production/infrastructure/ output -raw bastio-ip",
+                            script: "terraform -chdir=production/terraform/ output -raw bastio-ip",
                             returnStdout: true
                         ).trim()
 
@@ -63,7 +63,7 @@ pipeline {
                 }
             }
         }
-        **/
+        
 
 
         
@@ -141,7 +141,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    sed -i 's/^tag: .*/tag: v${BUILD_NUMBER}/' production/kubernetes/helm-charts/maven/values.yaml
+                    sed -i 's/^[[:space:]]*tag: .*/  tag: v'${BUILD_NUMBER}'/' production/kubernetes/helm-charts/maven/values.yaml
                     sed -i 's/^version: .*/version: v${BUILD_NUMBER}/' production/kubernetes/helm-charts/maven/Chart.yaml
                     """
                 }
@@ -158,6 +158,94 @@ pipeline {
                 }
             }
         }
+        
+        
+        stage ("Sync configs"){
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                    rsync -avz -e "ssh -i $SSH_KEY -o StrictHostKeyChecking=no" production/kubernetes $REMOTE_USER@$REMOTE_HOST:.
+                    """
+                    }
+                
+            }
+        }  
+
+
+
+        stage ("Deployment") {
+                steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my_ssh_key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+ssh -i $SSH_KEY -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+echo "Running commands on remote VM"
+
+# login using service principal
+az login --service-principal -u $AZURE_USER -p $AZURE_SECRET --tenant $AZURE_TENANT
+
+#Get AKS cluster credentials
+az aks get-credentials --resource-group rg-eastus --name maks-rg-eastus --overwrite-existing --admin
+az aks get-credentials --resource-group rg-ukwest --name maks-rg-ukwest --overwrite-existing --admin
+az aks get-credentials --resource-group rg-centralindia --name maks-rg-centralindia --overwrite-existing --admin
+
+
+# Switch to us
+k1
+
+#install nginx-ingress controller in us
+kubectl get ns ingress-nginx || kubectl apply -f eastus-install-nginx-ingress.yml
+
+#install argocd
+kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
+
+#install argo-rollout
+kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+
+#restart argocd-service
+sudo systemctl restart argocd-us.service
+
+
+# Switch to uk
+k2
+
+#install nginx-ingress controller in us
+kubectl get ns ingress-nginx || kubectl apply -f ukwest-install-nginx-ingress.yml
+
+#install argocd
+kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
+
+#install argo-rollout
+kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+
+#restart argocd-service
+sudo systemctl restart argocd-uk.service
+
+
+
+# Switch to central india
+k3
+
+#install nginx-ingress controller in central india
+kubectl get ns ingress-nginx || kubectl apply -f centralindia-install-nginx-ingress.yml
+
+#install argocd
+kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
+
+#install argo-rollout
+kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+
+#restart argocd-service
+sudo systemctl restart argocd-india
+
+
+                                                                                                                                                    
+EOF
+"""
+                    }
+                }
+            }
+
+
 
 
     } //Stages end here.
