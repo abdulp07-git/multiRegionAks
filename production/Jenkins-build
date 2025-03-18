@@ -12,7 +12,7 @@ pipeline {
         AZURE_USER = credentials('azure_user')
         SSH_PRIVATE_KEY = credentials('my_ssh_key')
         REMOTE_USER = "azureuser"
-        REMOTE_HOST = "135.235.170.5"
+        REMOTE_HOST = "4.247.167.150"
         
         
     }
@@ -189,53 +189,45 @@ az aks get-credentials --resource-group rg-ukwest --name maks-rg-ukwest --overwr
 az aks get-credentials --resource-group rg-centralindia --name maks-rg-centralindia --overwrite-existing --admin
 
 
-# Switch to us
-kubectl config use-context maks-rg-eastus-admin
 
-#install nginx-ingress controller in us
-kubectl get ns ingress-nginx || kubectl apply -f eastus-install-nginx-ingress.yml
+# Switch to central india
+kubectl config use-context maks-rg-centralindia-admin
+
+#install nginx-ingress controller in central india
+kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/india-ingress.yaml
 
 #install argocd
-kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
+bash kubernets/scripts/argocd.sh
 
 #install argo-rollout
 kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
 
 #restart argocd-service
-sudo systemctl restart argocd-us.service
+sudo systemctl restart argocd.service
+
+
+# Switch to us
+kubectl config use-context maks-rg-eastus-admin
+
+#install nginx-ingress controller in us
+kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/us-ingress.yaml
+
+
+#install argo-rollout
+kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+
+
 
 
 # Switch to uk
 kubectl config use-context maks-rg-ukwest-admin
 
 #install nginx-ingress controller in us
-kubectl get ns ingress-nginx || kubectl apply -f ukwest-install-nginx-ingress.yml
+kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/uk-ingress.yaml
 
-#install argocd
-kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
 
 #install argo-rollout
 kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
-
-#restart argocd-service
-sudo systemctl restart argocd-uk.service
-
-
-
-# Switch to central india
-kubectl config use-context maks-rg-centralindia-admin
-
-#install nginx-ingress controller in central india
-kubectl get ns ingress-nginx || kubectl apply -f centralindia-install-nginx-ingress.yml
-
-#install argocd
-kubectl get ns argocd || helm install argocd argo/argo-cd -n argocd --create-namespace
-
-#install argo-rollout
-kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
-
-#restart argocd-service
-sudo systemctl restart argocd-india
 
 
                                                                                                                                                     

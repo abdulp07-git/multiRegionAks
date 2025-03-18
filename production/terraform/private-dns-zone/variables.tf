@@ -1,9 +1,9 @@
 variable "private_dns_zone" {
   type = list(string)
   default = [ 
-    "2958ad3c-126e-449e-991c-66e0d4d60407.privatelink.eastus.azmk8s.io",
-    "93202369-02ea-4f5d-8f9a-c1d1695acf4e.privatelink.ukwest.azmk8s.io",
-    "ac4894c2-b603-4534-b159-f17dd6d8f09e.privatelink.centralindia.azmk8s.io" 
+    "181a9394-a08b-45a2-a58a-9a3f017abf4c.privatelink.eastus.azmk8s.io",
+    "ab9f43b1-1969-4be7-9150-cee59e8a7be1.privatelink.ukwest.azmk8s.io",
+    "18dcfbdd-6e1b-41b0-a06a-479d56f96a2b.privatelink.centralindia.azmk8s.io" 
   ]
 }
 
