@@ -1,3 +1,5 @@
+
+/**
 variable "private_dns_zone" {
   type = list(string)
   default = [ 
@@ -5,6 +7,11 @@ variable "private_dns_zone" {
     "ab9f43b1-1969-4be7-9150-cee59e8a7be1.privatelink.ukwest.azmk8s.io",
     "18dcfbdd-6e1b-41b0-a06a-479d56f96a2b.privatelink.centralindia.azmk8s.io" 
   ]
+}
+**/
+
+variable "private-fqdn" {
+  type = list(string)
 }
 
 variable "private_dns_rg" {

@@ -44,6 +44,7 @@ module "aks-cluster" {
 module "pvt-dns-zone" {
   source = "./private-dns-zone"
   vnet_id = module.network.vnet_id
+  private-fqdn = module.aks-cluster.private-fqdn
 }
 
 

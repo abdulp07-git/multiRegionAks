@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: maven-ukwest
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: maksacr.azurecr.io/helm
+    chart: maven
+    targetRevision: v12
+  destination:
+    server: https://maksdns-7525pal2.ab9f43b1-1969-4be7-9150-cee59e8a7be1.privatelink.ukwest.azmk8s.io:443
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

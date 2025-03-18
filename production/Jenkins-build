@@ -12,7 +12,7 @@ pipeline {
         AZURE_USER = credentials('azure_user')
         SSH_PRIVATE_KEY = credentials('my_ssh_key')
         REMOTE_USER = "azureuser"
-        REMOTE_HOST = "4.247.167.150"
+        
         
         
     }

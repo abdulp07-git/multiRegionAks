@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: maven-incluster
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: maksacr.azurecr.io/helm
+    chart: maven
+    targetRevision: v12
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

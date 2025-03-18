@@ -20,3 +20,11 @@ output "afd-cname" {
 }
 
 
+
+output "private-fqdn" {
+  value = module.aks-cluster.private-fqdn
+}
+
+output "private_dns_zones" {
+  value = module.pvt-dns-zone.private_dns_zones
+}
