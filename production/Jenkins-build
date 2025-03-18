@@ -194,10 +194,10 @@ az aks get-credentials --resource-group rg-centralindia --name maks-rg-centralin
 kubectl config use-context maks-rg-centralindia-admin
 
 #install nginx-ingress controller in central india
-kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/india-ingress.yaml
+kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/india-ingress.yaml
 
 #install argocd
-bash kubernets/scripts/argocd.sh
+bash kubernetes/scripts/argocd.sh
 
 #install argo-rollout
 kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
@@ -210,7 +210,7 @@ sudo systemctl restart argocd.service
 kubectl config use-context maks-rg-eastus-admin
 
 #install nginx-ingress controller in us
-kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/us-ingress.yaml
+kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/us-ingress.yaml
 
 
 #install argo-rollout
@@ -223,7 +223,7 @@ kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n 
 kubectl config use-context maks-rg-ukwest-admin
 
 #install nginx-ingress controller in us
-kubectl get ns ingress-nginx || kubectl apply -f kubernets/ingress/uk-ingress.yaml
+kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/uk-ingress.yaml
 
 
 #install argo-rollout
