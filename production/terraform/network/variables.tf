@@ -53,7 +53,14 @@ variable "security-rule" {
   },
   {
     name = "allow-argo-in", priority = 1012, destination_port = "8083"
-  }  ]
+  },
+  {
+    name = "allow-promethus", priority = 1013, destination_port = "9090"
+  },
+  {
+    name = "allow-nodeexportes", priority = 1014, destination_port = "9100"
+  } 
+     ]
 }
 
 
