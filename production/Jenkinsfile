@@ -218,7 +218,7 @@ kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/india-ingres
 bash kubernetes/scripts/argocd.sh
 
 #install argo-rollout
-kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+if ! helm list -n argo-rollouts | grep -q 'argo-rollouts'; then   helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace; else   echo "Argo Rollouts is already installed via Helm."; fi
 
 #restart argocd-service
 sudo systemctl restart argocd.service
@@ -228,10 +228,15 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 
 #install prometheus and grafana
-helm install prometheus prometheus-community/kube-prometheus-stack \
---namespace monitoring \
---create-namespace \
---set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+
+if ! helm list -n monitoring | grep -q 'prometheus'; then
+  helm install prometheus prometheus-community/kube-prometheus-stack \
+    --namespace monitoring \
+    --create-namespace \
+    --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+else
+  echo "Prometheus is already installed via Helm."
+fi
 
 #restart grafana and promethus
 sudo systemctl restart prometheus
@@ -247,17 +252,20 @@ kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/us-ingress.y
 
 
 #install argo-rollout
-kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+if ! helm list -n argo-rollouts | grep -q 'argo-rollouts'; then   helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace; else   echo "Argo Rollouts is already installed via Helm."; fi
 
 #install prometheus node exporter
-helm status prometheus-remote -n monitoring >/dev/null 2>&1 || \
-helm install prometheus-remote prometheus-community/kube-prometheus-stack \
---namespace monitoring \
---create-namespace \
---set prometheus.enabled=false \
---set grafana.enabled=false \
---set alertmanager.enabled=false \
---values kubernetes/prometheus/values.yaml
+if ! helm list -n monitoring | grep -q 'prometheus-remote'; then
+  helm install prometheus-remote prometheus-community/kube-prometheus-stack \
+    --namespace monitoring \
+    --create-namespace \
+    --set prometheus.enabled=false \
+    --set grafana.enabled=false \
+    --set alertmanager.enabled=false \
+    --values kubernetes/prometheus/values.yaml
+else
+  echo "Prometheus Remote is already installed via Helm."
+fi
 
 #install serviceMonitor
 kubectl apply -f kubernetes/prometheus/prometheus-servicemonitor.yaml
@@ -272,17 +280,20 @@ kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/uk-ingress.y
 
 
 #install argo-rollout
-kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
+if ! helm list -n argo-rollouts | grep -q 'argo-rollouts'; then   helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace; else   echo "Argo Rollouts is already installed via Helm."; fi
 
 #install prometheus node exporter
-helm status prometheus-remote -n monitoring >/dev/null 2>&1 || \
-helm install prometheus-remote prometheus-community/kube-prometheus-stack \
---namespace monitoring \
---create-namespace \
---set prometheus.enabled=false \
---set grafana.enabled=false \
---set alertmanager.enabled=false \
---values kubernetes/prometheus/values.yaml
+if ! helm list -n monitoring | grep -q 'prometheus-remote'; then
+  helm install prometheus-remote prometheus-community/kube-prometheus-stack \
+    --namespace monitoring \
+    --create-namespace \
+    --set prometheus.enabled=false \
+    --set grafana.enabled=false \
+    --set alertmanager.enabled=false \
+    --values kubernetes/prometheus/values.yaml
+else
+  echo "Prometheus Remote is already installed via Helm."
+fi
 
 #install serviceMonitor
 kubectl apply -f kubernetes/prometheus/prometheus-servicemonitor.yaml
@@ -305,9 +316,7 @@ helm upgrade prometheus prometheus-community/kube-prometheus-stack \
     --set prometheus.prometheusSpec.additionalScrapeConfigs[3].static_configs[0].targets[0]="10.1.0.64:8080"
 
 #Deploy the application
-kubectl apply -f kubernetes/maven/india-application.yaml
-kubectl apply -f kubernetes/maven/us-application.yaml
-kubectl apply -f kubernetes/maven/uk-application.yaml
+
                                                                                                                                                     
 EOF
 """

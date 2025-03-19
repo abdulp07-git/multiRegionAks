@@ -10,7 +10,7 @@ spec:
     chart: maven
     targetRevision: v12
   destination:
-    server: https://maksdns-boy5y3yp.181a9394-a08b-45a2-a58a-9a3f017abf4c.privatelink.eastus.azmk8s.io:443
+    server: https://maksdns-08oq2pon.19381e50-a9b0-4f3a-bd6f-811915b7dcb9.privatelink.eastus.azmk8s.io:443
     namespace: default
   syncPolicy:
     automated:
