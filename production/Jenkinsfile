@@ -299,9 +299,9 @@ fi
 kubectl apply -f kubernetes/prometheus/prometheus-servicemonitor.yaml
 
 
-               # SWITCH TO US CLUSTER
+               # SWITCH TO INDIA CLUSTER
 
-kubectl config use-context maks-pro-eastus-admin
+kubectl config use-context maks-pro-centralindia-admin
 
 
 helm upgrade prometheus prometheus-community/kube-prometheus-stack \
