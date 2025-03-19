@@ -57,7 +57,7 @@ module "pvt-dns-zone" {
 }
 
 
-/**
+
 module "gateway" {
   source = "./appGateway"
   rg_names = module.network.rg_names
@@ -76,4 +76,4 @@ module "frontDoor" {
 }
 
 
-*/
+

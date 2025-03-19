@@ -37,6 +37,7 @@ resource "azurerm_frontdoor" "afd" {
       weight      = 50
     }
 
+
     backend {
       host_header = var.afd-domain-name
       address     = var.gateway-ips[1]  
@@ -45,6 +46,7 @@ resource "azurerm_frontdoor" "afd" {
       priority    = 2
       weight      = 50
     }
+
 
     backend {
       host_header = var.afd-domain-name

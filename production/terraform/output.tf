@@ -17,7 +17,7 @@ output "private_dns_zones" {
   value = module.pvt-dns-zone.private_dns_zones
 }
 
-/*
+
 output "gateway-ips" {
   value = module.gateway.gateway-ips
 }
@@ -29,4 +29,3 @@ output "afd-cname" {
 
 
 
-*/

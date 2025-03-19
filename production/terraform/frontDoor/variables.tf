@@ -4,7 +4,7 @@ variable "gateway-ips" {
 
 variable "afd-rg" {
   type = string
-  default = "rg-centralindia"
+  default = "pro-centralindia"
 }
 
 variable "afd-domain-name" {
