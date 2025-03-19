@@ -18,15 +18,19 @@ terraform {
 
 module "network" {
   source = "./network"
+  region = var.region
+  rgname = var.rgname
 }
+
+
 
 module "acr" {
   source = "./acr"
   rg_names = module.network.rg_names
   rg_location = module.network.rg_location
+  acr-name = var.acr-name
   
 }
-
 
 
 module "aks-cluster" {
@@ -36,6 +40,11 @@ module "aks-cluster" {
   vnet_id = module.network.vnet_id
   subnet1_id = module.network.subnet1_id
   acr-id = module.acr.acr-id
+  region = var.region
+  default_node_pool_size = var.default_node_pool_size
+  default_node_pool_count = var.default_node_pool_count
+  worker_node_pool_size = var.worker_node_pool_size
+  worker_node_pool_count = var.worker_node_pool_count
 }
 
 
@@ -48,18 +57,23 @@ module "pvt-dns-zone" {
 }
 
 
-
+/**
 module "gateway" {
   source = "./appGateway"
   rg_names = module.network.rg_names
   rg_location = module.network.rg_location
   vnet_id = module.network.vnet_id
   subnet2_id = module.network.subnet2_id
+  backend = var.backend
+  hostname = var.hostname
 }
 
 
 module "frontDoor" {
   source = "./frontDoor"
   gateway-ips = module.gateway.gateway-ips
+  afd-domain-name = var.afd-domain-name
 }
 
+
+*/

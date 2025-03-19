@@ -17,9 +17,9 @@ variable "private-fqdn" {
 variable "private_dns_rg" {
   type = list(string)
   default = [ 
-    "mc_rg-eastus_maks-rg-eastus_eastus",
-    "mc_rg-ukwest_maks-rg-ukwest_ukwest",
-    "mc_rg-centralindia_maks-rg-centralindia_centralindia" 
+    "mc_pro-eastus_maks-pro-eastus_eastus",
+    "mc_pro-ukwest_maks-pro-ukwest_ukwest",
+    "mc_pro-centralindia_maks-pro-centralindia_centralindia" 
     ]
 }
 

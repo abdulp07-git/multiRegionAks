@@ -2,7 +2,12 @@
 variable "region" {
   description = "Regions in which the cluster is created"  
   type = list(string)
-  default = [ "eastus", "ukwest", "centralindia" ]
+  
+}
+
+variable "rgname" {
+  type = string
+ 
 }
 
 

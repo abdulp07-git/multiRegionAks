@@ -8,12 +8,19 @@ output "acr-name" {
 }
 
 
+output "private-fqdn" {
+  value = module.aks-cluster.private-fqdn
+}
 
 
+output "private_dns_zones" {
+  value = module.pvt-dns-zone.private_dns_zones
+}
+
+/*
 output "gateway-ips" {
   value = module.gateway.gateway-ips
 }
-
 
 output "afd-cname" {
   value = module.frontDoor.afd-cname
@@ -21,10 +28,5 @@ output "afd-cname" {
 
 
 
-output "private-fqdn" {
-  value = module.aks-cluster.private-fqdn
-}
 
-output "private_dns_zones" {
-  value = module.pvt-dns-zone.private_dns_zones
-}
+*/

@@ -25,30 +25,29 @@ variable "dns_prefix" {
 }
 
 variable "default_node_pool_size" {
-  type = string
-  default = "Standard_DS2_v2"
+  type = string 
 }
 
 variable "default_node_pool_count" {
   type = number
-  default = 1
+  
 }
 
 
 variable "worker_node_pool_size" {
   type = string
-  default = "Standard_A2m_v2"
+  
 }
 
 variable "worker_node_pool_count" {
   type = number
-  default = 1
+  
 }
 
 variable "region" {
   description = "Regions in which the cluster is created"  
   type = list(string)
-  default = [ "eastus", "ukwest", "centralindia" ]
+  
 }
 
 

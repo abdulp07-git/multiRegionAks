@@ -7,7 +7,8 @@ variable "afd-rg" {
   default = "rg-centralindia"
 }
 
-variable "domain-name" {
-  default = "maven.intodepth.in"
+variable "afd-domain-name" {
+  type = string
+  
 }
 

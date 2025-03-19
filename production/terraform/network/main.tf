@@ -4,7 +4,7 @@
 resource "azurerm_resource_group" "rg" {
   count = length(var.region)
   location = var.region[count.index]
-  name = "rg-${var.region[count.index]}"
+  name = "${var.rgname}-${var.region[count.index]}"
 }
 
 
@@ -221,7 +221,7 @@ resource "azurerm_linux_virtual_machine" "bastion" {
 
   }
 
-  source_image_id = "/subscriptions/82e6f7b9-feb5-4db0-9115-0528fa4ad1c7/resourceGroups/generalRG/providers/Microsoft.Compute/images/bastion-image-20250317000123"
+  source_image_id = "/subscriptions/82e6f7b9-feb5-4db0-9115-0528fa4ad1c7/resourceGroups/generalRG/providers/Microsoft.Compute/images/bastion-image-final"
 
 }
 

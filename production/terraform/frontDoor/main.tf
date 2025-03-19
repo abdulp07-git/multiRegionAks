@@ -29,7 +29,7 @@ resource "azurerm_frontdoor" "afd" {
     name = "afd-backend-pool"
 
     backend {
-      host_header = var.domain-name  
+      host_header = var.afd-domain-name  
       address     = var.gateway-ips[0]  
       http_port   = 80
       https_port  = 443
@@ -38,7 +38,7 @@ resource "azurerm_frontdoor" "afd" {
     }
 
     backend {
-      host_header = var.domain-name
+      host_header = var.afd-domain-name
       address     = var.gateway-ips[1]  
       http_port   = 80
       https_port  = 443
@@ -47,7 +47,7 @@ resource "azurerm_frontdoor" "afd" {
     }
 
     backend {
-      host_header = var.domain-name
+      host_header = var.afd-domain-name
       address     = var.gateway-ips[2]  
       http_port   = 80
       https_port  = 443
@@ -68,6 +68,6 @@ resource "azurerm_frontdoor" "afd" {
   
   frontend_endpoint {
     name      = "afd-frontend"
-    host_name = var.domain-name
+    host_name = var.afd-domain-name
   }
 }

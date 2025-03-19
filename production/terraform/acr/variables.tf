@@ -9,5 +9,5 @@ variable "rg_location" {
 
 variable "acr-name" {
   type = string
-  default = "maksacr"
+  
 }

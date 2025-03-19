@@ -3,10 +3,10 @@
 set -e  # Exit on error
 
 # Main cluster where ArgoCD is installed
-MAIN_CLUSTER="maks-rg-centralindia-admin"
+MAIN_CLUSTER="maks-pro-centralindia-admin"
 
 # Clusters to add to ArgoCD
-CLUSTERS_TO_ADD=("maks-rg-eastus-admin" "maks-rg-ukwest-admin")
+CLUSTERS_TO_ADD=("maks-pro-eastus-admin" "maks-pro-ukwest-admin")
 
 # Function to check if ArgoCD namespace exists
 namespace_exists() {
