@@ -151,6 +151,9 @@ pipeline {
                     sh """
                     sed -i 's/^[[:space:]]*tag: .*/  tag: v'${BUILD_NUMBER}'/' production/kubernetes/helm-charts/maven/values.yaml
                     sed -i 's/^version: .*/version: v${BUILD_NUMBER}/' production/kubernetes/helm-charts/maven/Chart.yaml
+                    sed -i 's/\(targetRevision:\) .*/\1 v'${BUILD_NUMBER}'/' production/kubernetes/maven/india-application.yaml
+                    sed -i 's/\(targetRevision:\) .*/\1 v'${BUILD_NUMBER}'/' production/kubernetes/maven/uk-application.yaml
+                    sed -i 's/\(targetRevision:\) .*/\1 v'${BUILD_NUMBER}'/' production/kubernetes/maven/us-application.yaml
                     """
                 }
             }
