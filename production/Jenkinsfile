@@ -42,7 +42,7 @@ pipeline {
 
                         // Run Terraform commands
                         sh "terraform -chdir=production/terraform init -reconfigure"
-                        sh "terraform -chdir=production/terraform plan -out=tfplan"
+                        sh "terraform -chdir=production/terraform plan -var-file=production.tfvars -out=tfplan"
                         sh "terraform -chdir=production/terraform apply -auto-approve tfplan"
 
                         // Extract VM Public IP and assign it to REMOTE_HOST
