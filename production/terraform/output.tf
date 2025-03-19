@@ -26,6 +26,12 @@ output "afd-cname" {
   value = module.frontDoor.afd-cname
 }
 
+output "cdn_url" {
+  value = module.cdn.cdn_url
+}
 
+output "blob_url" {
+  value = module.cdn.blob_url
+}
 
 

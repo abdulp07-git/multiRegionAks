@@ -76,4 +76,10 @@ module "frontDoor" {
 }
 
 
+module "cdn" {
+  source = "./static-cdn"
+  rg_names = module.network.rg_names
+  rg_location = module.network.rg_location
+}
+
 

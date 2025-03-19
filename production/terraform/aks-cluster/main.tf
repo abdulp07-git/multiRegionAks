@@ -37,8 +37,7 @@ resource "azurerm_kubernetes_cluster" "maks" {
 
   azure_active_directory_role_based_access_control {
     admin_group_object_ids = [ "9be1221b-68f2-4a2a-a1bd-36361f39a6d6" ]
-    azure_rbac_enabled = true
-
+    azure_rbac_enabled = false
   }
 
   tags = {
