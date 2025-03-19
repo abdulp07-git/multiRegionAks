@@ -207,7 +207,8 @@ az aks get-credentials --resource-group pro-ukwest --name maks-pro-ukwest --over
 az aks get-credentials --resource-group pro-centralindia --name maks-pro-centralindia --overwrite-existing --admin
 
 
-# Switch to central india
+           # SWITCH TO CENTRAL INDIA CLUSTER
+
 kubectl config use-context maks-pro-centralindia-admin
 
 #install nginx-ingress controller in central india
@@ -222,8 +223,23 @@ kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n 
 #restart argocd-service
 sudo systemctl restart argocd.service
 
+#install helm repo for prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
 
-# Switch to us
+#install prometheus and grafana
+helm install prometheus prometheus-community/kube-prometheus-stack \
+--namespace monitoring \
+--create-namespace \
+--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+
+#restart grafana and promethus
+sudo systemctl restart prometheus
+sudo systemctl restart grafana
+
+
+           # SWITCH TO US CLUSTER
+
 kubectl config use-context maks-pro-eastus-admin
 
 #install nginx-ingress controller in us
@@ -233,10 +249,22 @@ kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/us-ingress.y
 #install argo-rollout
 kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
 
+#install prometheus node exporter
+helm status prometheus-remote -n monitoring >/dev/null 2>&1 || \
+helm install prometheus-remote prometheus-community/kube-prometheus-stack \
+--namespace monitoring \
+--create-namespace \
+--set prometheus.enabled=false \
+--set grafana.enabled=false \
+--set alertmanager.enabled=false \
+--values kubernetes/prometheus/values.yaml
+
+#install serviceMonitor
+kubectl apply -f kubernetes/prometheus/prometheus-servicemonitor.yaml
 
 
+              # SWITCH TO UK CLUSTER
 
-# Switch to uk
 kubectl config use-context maks-pro-ukwest-admin
 
 #install nginx-ingress controller in us
@@ -246,6 +274,35 @@ kubectl get ns ingress-nginx || kubectl apply -f kubernetes/ingress/uk-ingress.y
 #install argo-rollout
 kubectl get ns argo-rollouts ||helm install argo-rollouts argo/argo-rollouts -n argo-rollouts --create-namespace
 
+#install prometheus node exporter
+helm status prometheus-remote -n monitoring >/dev/null 2>&1 || \
+helm install prometheus-remote prometheus-community/kube-prometheus-stack \
+--namespace monitoring \
+--create-namespace \
+--set prometheus.enabled=false \
+--set grafana.enabled=false \
+--set alertmanager.enabled=false \
+--values kubernetes/prometheus/values.yaml
+
+#install serviceMonitor
+kubectl apply -f kubernetes/prometheus/prometheus-servicemonitor.yaml
+
+
+               # SWITCH TO US CLUSTER
+
+kubectl config use-context maks-pro-eastus-admin
+
+
+helm upgrade prometheus prometheus-community/kube-prometheus-stack \
+    --namespace monitoring \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[0].job_name="maks-rg-eastus-9100" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[0].static_configs[0].targets[0]="10.0.0.65:9100" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[1].job_name="maks-rg-eastus-8080" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[1].static_configs[0].targets[0]="10.0.0.64:8080" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[2].job_name="maks-rg-ukwest-9100" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[2].static_configs[0].targets[0]="10.1.0.65:9100" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[3].job_name="maks-rg-ukwest-8080" \
+    --set prometheus.prometheusSpec.additionalScrapeConfigs[3].static_configs[0].targets[0]="10.1.0.64:8080"
 
                                                                                                                                                     
 EOF
