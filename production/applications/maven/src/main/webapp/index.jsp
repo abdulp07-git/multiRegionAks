@@ -47,7 +47,7 @@
         }
 
         .container {
-            background-color: #fff;
+            background-color: #8c6d6d;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
