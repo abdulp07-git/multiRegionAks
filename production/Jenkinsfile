@@ -304,6 +304,10 @@ helm upgrade prometheus prometheus-community/kube-prometheus-stack \
     --set prometheus.prometheusSpec.additionalScrapeConfigs[3].job_name="maks-rg-ukwest-8080" \
     --set prometheus.prometheusSpec.additionalScrapeConfigs[3].static_configs[0].targets[0]="10.1.0.64:8080"
 
+#Deploy the application
+kubectl apply -f kubernetes/maven/india-application.yaml
+kubectl apply -f kubernetes/maven/us-application.yaml
+kubectl apply -f kubernetes/maven/uk-application.yaml
                                                                                                                                                     
 EOF
 """
