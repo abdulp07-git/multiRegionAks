@@ -12,6 +12,8 @@ pipeline {
         AZURE_USER = credentials('azure_user')
         SSH_PRIVATE_KEY = credentials('my_ssh_key')
         REMOTE_USER = "azureuser"
+        REGISTRY = "maksacr"
+        REMOTE_HOST = "4.188.252.174"
         
         
         
@@ -27,7 +29,7 @@ pipeline {
             }
         }
         
-        
+        /**
         
         stage('Terraform build') {
             steps {
@@ -74,7 +76,7 @@ pipeline {
         
 
 
-        
+        **/
         
         
 
@@ -83,7 +85,10 @@ pipeline {
                 sh 'mvn -f production/applications/maven/pom.xml test'
             }
         }
+         
 
+
+        /** 
         stage('SonarCloud Scan') {
             steps {
                     sh '''
@@ -96,6 +101,8 @@ pipeline {
                 }
             
         }
+
+        **/
 
         
         stage('Build Artifact'){
@@ -151,9 +158,9 @@ pipeline {
                     sh """
                     sed -i 's/^[[:space:]]*tag: .*/  tag: v'${BUILD_NUMBER}'/' production/kubernetes/helm-charts/maven/values.yaml
                     sed -i 's/^version: .*/version: v${BUILD_NUMBER}/' production/kubernetes/helm-charts/maven/Chart.yaml
-                    sed -i 's/^[[:space:]]*targetRevision: .*/  targetRevision: v'${BUILD_NUMBER}'/' production/kubernetes/maven/india-application.yaml
-                    sed -i 's/^[[:space:]]*targetRevision: .*/  targetRevision: v'${BUILD_NUMBER}'/' production/kubernetes/maven/uk-application.yaml
-                    sed -i 's/^[[:space:]]*targetRevision: .*/  targetRevision: v'${BUILD_NUMBER}'/' production/kubernetes/maven/us-application.yaml
+                    sed -i 's/^\([[:space:]]*targetRevision:[[:space:]]*\).*/\1v'${BUILD_NUMBER}'/' production/kubernetes/maven/india-application.yaml
+                    sed -i 's/^\([[:space:]]*targetRevision:[[:space:]]*\).*/\1v'${BUILD_NUMBER}'/' production/kubernetes/maven/uk-application.yaml
+                    sed -i 's/^\([[:space:]]*targetRevision:[[:space:]]*\).*/\1v'${BUILD_NUMBER}'/' production/kubernetes/maven/us-application.yaml
                     """
                 }
             }
