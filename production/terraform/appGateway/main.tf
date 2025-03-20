@@ -43,6 +43,20 @@ resource "azurerm_application_gateway" "app-gway" {
     host_name = var.hostname
   }
 
+   # Backend Settings for HTTPS
+
+  /** 
+  backend_http_settings {
+    name                  = "https-settings-maven"
+    cookie_based_affinity = "Disabled"
+    port                  = 443
+    protocol              = "Https"
+    request_timeout       = 30
+    host_name             = var.hostname
+  }
+  **/
+
+
   http_listener {
     name = "listener-maven"
     frontend_ip_configuration_name = "appgw-frontend-ip"
@@ -51,10 +65,37 @@ resource "azurerm_application_gateway" "app-gway" {
     host_name = var.hostname
   }
 
+    # HTTPS Listener
+  /**  
+  http_listener {
+    name                        = "listener-maven-https"
+    frontend_ip_configuration_name = "appgw-frontend-ip"
+    frontend_port_name          = "https-port"
+    protocol                    = "Https"
+    ssl_certificate_name        = "maven-cert1"
+    host_name                   = var.hostname
+  }
+
+
+  ssl_certificate {
+  name     = "maven-cert1"
+  data     = filebase64("appGateway/maven.intodepth.in.pfx")
+  password = "Password123"
+  }
+  **/
+
   frontend_port {
     name = "http-port"
     port = 80
   }
+  
+  /**
+    # Frontend Port for HTTPS
+  frontend_port {
+    name = "https-port"
+    port = 443
+  }
+  **/
 
   request_routing_rule {
     name = "rule-maven"
@@ -64,5 +105,17 @@ resource "azurerm_application_gateway" "app-gway" {
     backend_address_pool_name = "appgw-backend-pool"
     backend_http_settings_name = "http-settings-maven"
   }
+  
+  /**
+    # New Routing Rule for HTTPS
+  request_routing_rule {
+    name                        = "rule-maven-https"
+    rule_type                   = "Basic"
+    priority                    = 101
+    http_listener_name          = "listener-maven-https"
+    backend_address_pool_name   = "appgw-backend-pool"
+    backend_http_settings_name  = "https-settings-maven"
+  }
+  **/
 
 }

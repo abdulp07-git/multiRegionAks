@@ -47,10 +47,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: 
-    - secretName: maven-intodepth
-      hosts:
-        - maven.intodepth.in
+  tls: []
+    #- secretName: maven-intodepth
+    #  hosts:
+    #    - maven.intodepth.in
 
 
 hpa:
