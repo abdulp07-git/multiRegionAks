@@ -221,7 +221,7 @@ resource "azurerm_linux_virtual_machine" "bastion" {
 
   }
 
-  source_image_id = "/subscriptions/82e6f7b9-feb5-4db0-9115-0528fa4ad1c7/resourceGroups/generalRG/providers/Microsoft.Compute/images/bastion-image-final"
+  source_image_id = "/subscriptions/82e6f7b9-feb5-4db0-9115-0528fa4ad1c7/resourceGroups/generalRG/providers/Microsoft.Compute/images/bastion-image-toi"
 
 }
 
