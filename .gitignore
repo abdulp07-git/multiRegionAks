@@ -5,3 +5,5 @@ notes
 *.tgz
 *.pdf
 *.gz
+*.pem
+backup
