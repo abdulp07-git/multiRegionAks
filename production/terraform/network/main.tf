@@ -18,7 +18,7 @@ resource "azurerm_virtual_network" "vnet" {
   address_space = ["10.${count.index}.0.0/16"]
 }
 
-/* Subnet1 all three region*/
+/* Subnet1 for AKS in all three region */
 
 resource "azurerm_subnet" "subnet1" {
   count = length(var.region)
@@ -29,7 +29,7 @@ resource "azurerm_subnet" "subnet1" {
 }
 
 
-/* Subnet2 all three region*/
+/* Subnet2 for applicatio gateway in all three region*/
 
 resource "azurerm_subnet" "subnet2" {
   count = length(var.region)
@@ -38,6 +38,25 @@ resource "azurerm_subnet" "subnet2" {
   virtual_network_name = azurerm_virtual_network.vnet[count.index].name
   address_prefixes = ["10.${count.index}.32.0/19"]
 }
+
+/* subnet3 for database in all three region  */
+resource "azurerm_subnet" "subnet3" {
+  count = length(var.region)
+  name = "subnet3-${var.region[count.index]}"
+  resource_group_name = azurerm_resource_group.rg[count.index].name 
+  virtual_network_name = azurerm_virtual_network.vnet[count.index].name
+  address_prefixes = ["10.${count.index}.64.0/19"]
+  delegation {
+    name = "postgresql-delegation"
+
+    service_delegation {
+      name    = "Microsoft.DBforPostgreSQL/flexibleServers"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }
+}
+
+
 
 
 /*NSG all three region*/

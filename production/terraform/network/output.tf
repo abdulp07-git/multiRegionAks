@@ -7,12 +7,15 @@ output "test" {
   value = { for index, test in azurerm_virtual_network.vnet: test.name => test.id }
 }
 
-output "bastion-ip" {
-  value = azurerm_linux_virtual_machine.bastion.public_ip_address
-}
+
 /***********/
 
 
+/* Bastion server ip */
+
+output "bastion-ip" {
+  value = azurerm_linux_virtual_machine.bastion.public_ip_address
+}
 
 /* Resource group names as a list*/
 
@@ -37,8 +40,13 @@ output "subnet1_id" {
   value = [ for sid in azurerm_subnet.subnet1 : sid.id]
 }
 
-
+/*Subnet2 id's as a list*/
 output "subnet2_id" {
   value = [ for sid in azurerm_subnet.subnet2 : sid.id]
 }
 
+/*Subnet3 id's as a list*/
+
+output "subnet3_id" {
+  value = [ for sid in azurerm_subnet.subnet3 : sid.id ]
+}

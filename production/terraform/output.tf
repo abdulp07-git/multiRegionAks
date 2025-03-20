@@ -35,3 +35,18 @@ output "blob_url" {
 }
 
 
+output "postgres_master_endpoint" {
+    value       = module.database.postgres_master_endpoint
+}
+
+
+
+output "postgres_replica_ukwest_endpoint" {
+    value       = module.database.postgres_replica_ukwest_endpoint
+}
+
+/**
+output "postgres_replica_useast_endpoint" {
+    value       = module.database.postgres_replica_useast_endpoint
+}
+*/

@@ -82,4 +82,11 @@ module "cdn" {
   rg_location = module.network.rg_location
 }
 
+module "database" {
+  source = "./database"
+  vnet_id = module.network.vnet_id
+  subnet3_id = module.network.subnet3_id
+  rg_names = module.network.rg_names
+  rg_location = module.network.rg_location
+}
 
