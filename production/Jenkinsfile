@@ -87,7 +87,7 @@ pipeline {
          
 
 
-        /** 
+        
         stage('SonarCloud Scan') {
             steps {
                     sh '''
@@ -101,7 +101,7 @@ pipeline {
             
         }
 
-        **/
+       
 
         
         stage('Build Artifact'){
